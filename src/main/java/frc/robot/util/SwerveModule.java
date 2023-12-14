@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.AbsoluteEncoder;
@@ -8,9 +10,11 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.hal.ConstantsJNI;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
-
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.robot.Consts;
 
 public class SwerveModule {
@@ -72,12 +76,69 @@ public class SwerveModule {
         turnMotor.burnFlash();
 
         chassisAngularOffset = Rotation2d.fromDegrees(encoderOffset);
-        lastAngle = new Rotation2d(chassisAngularOffset);
+        lastAngle = chassisAngularOffset;
 
         driveFeedforward = new SimpleMotorFeedforward(
             Consts.Swerve.Drive.Feedforward.KS,
             Consts.Swerve.Drive.Feedforward.KV,
             Consts.Swerve.Drive.Feedforward.KA
+        );
+    }
+
+                                //TODO supposed to be `2` after?
+    public void setDesiredState(SwerveModuleState2  rawDesiredState, boolean isOpenLoop) {
+        SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(
+            new SwerveModuleState(
+                rawDesiredState.speedMetersPerSecond,
+                rawDesiredState.angle.plus(chassisAngularOffset)
+            ),
+            new Rotation2d(turningAbsoluteEncoder.getPosition())
+        );
+
+        if(isOpenLoop){
+            driveMotor.set(ControlMode.PercentOutput, optimizedDesiredState.speedMetersPerSecond / Consts.Swerve.maxSpeed);
+        } else {
+            double wheelRPM = ((optimizedDesiredState.speedMetersPerSecond * 60) / Consts.Swerve.wheelCircumference);
+            double motorRPM = wheelRPM * Consts.Swerve.gearRatio;
+            double sensorCounts = motorRPM * (2048.0 / 600.0);
+            driveMotor.set(ControlMode.Velocity, sensorCounts,
+                           DemandType.ArbitraryFeedForward, driveFeedforward.calculate(optimizedDesiredState.speedMetersPerSecond));
+        }
+
+        // * Prevent rotating module if speed is less then 1% in order to prevent jittering
+        Rotation2d angle = (Math.abs(optimizedDesiredState.speedMetersPerSecond) <= (Consts.Swerve.maxSpeed * 0.01)) ? 
+                                lastAngle : optimizedDesiredState.angle;
+        lastAngle = angle; // is it possible to forgo this line and set make the previous line an assignment to lastAngle?
+        turningPID.setReference(angle.getRadians(), CANSparkMax.ControlType.kPosition,
+                                0,
+                                Consts.Swerve.Turn.KV * rawDesiredState.omegaRadPerSecond);
+    }
+
+    public SwerveModulePosition getPosition() {
+        return new SwerveModulePosition(
+                // * the distance measured by the wheel
+            driveMotor.getSelectedSensorPosition()      // get the raw position
+                * Consts.Swerve.wheelCircumference      // find the number of rotations
+                / (Consts.Swerve.gearRatio * 2048.0),   // correct gear ratio & units
+
+                // * the angle of the wheel
+            new Rotation2d(
+                turningAbsoluteEncoder.getPosition()    // position of the motor in rotations
+                - chassisAngularOffset.getRotations())
+        );
+    }
+
+    public SwerveModuleState2 getState() {
+        return new SwerveModuleState2(
+            ((driveMotor.getSelectedSensorVelocity()    // get raw falcon units
+                * (600.0 / 2048.0)                      // motor RPM
+                / Consts.Swerve.gearRatio)              // wheel RPM
+                * Consts.Swerve.wheelCircumference)     // wheel surface speed in m/min
+                / 60.0,                                 // wheel surface speed in m/sec
+            new Rotation2d(
+                turningAbsoluteEncoder.getPosition() 
+                - chassisAngularOffset.getRotations()),
+            turningAbsoluteEncoder.getVelocity()
         );
     }
 }

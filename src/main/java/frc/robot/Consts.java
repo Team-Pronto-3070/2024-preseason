@@ -1,3 +1,5 @@
+package frc.robot;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -6,9 +8,9 @@ import edu.wpi.first.math.util.Units;
 public final class Consts {
     
     public static final class Swerve {
-        public static final double wheelBase = null; // ! FILL IN
-        public static final double trackWidth = null; // ! FILL IN
-        public static final double wheelCircumference = null; // ! FILL IN
+        public static final double wheelBase = 0.; // TODO FILL IN
+        public static final double trackWidth = 0.; // TODO FILL IN
+        public static final double wheelCircumference = 0.; // TODO FILL IN
 
             // The MAXSwerve module can be configured with one of three pinion gears: 12T, 13T, or 14T.
             // This changes the drive speed of the module (a pinion gear with more teeth will result in a
