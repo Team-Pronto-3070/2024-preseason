@@ -8,9 +8,9 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final class Swerve {
-        public static final double wheelBase = Units.inchesToMeters(26.0 - 3.5); // distance between front and back
+        public static final double wheelBase = Units.inchesToMeters(18.0 - 3.5); // distance between front and back
                                                                                  // wheels
-        public static final double trackWidth = Units.inchesToMeters(24.0 - 3.5); // distance between left and right
+        public static final double trackWidth = Units.inchesToMeters(18.0 - 3.5); // distance between left and right
                                                                                   // wheels
         public static final double wheelCircumference = Units.inchesToMeters(3) * Math.PI;
 
@@ -90,7 +90,7 @@ public final class Constants {
             public static final double maxModuleAngularSpeed = // radians per second
                     Units.rotationsPerMinuteToRadiansPerSecond(
                             11000.0 // NEO550 free speed (rpm)
-                                    * 203.0 / 9424.0); // gear ratio
+                            * 203.0 / 9424.0); // gear ratio
             public static final double KV = 12.0 / maxModuleAngularSpeed; // volts * seconds / radians
 
             public static final class PID {
@@ -114,8 +114,5 @@ public final class Constants {
         public static final double triggerDeadband = 0.5;
 
         public static final double slowSpeed = 0.5;
-
-        public static final double maxManualExtensionSpeed = 0.8;
-        public static final double maxManualRotationSpeed = 1.0;
     }
 }

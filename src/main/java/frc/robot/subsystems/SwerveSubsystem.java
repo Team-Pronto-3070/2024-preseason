@@ -11,7 +11,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+//import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import frc.robot.util.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,7 +32,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule rearLeft;
     private final SwerveModule rearRight;
 
-    private final edu.wpi.first.wpilibj.ADIS16470_IMU gyro;
+    private final ADIS16470_IMU gyro;
     private double gyroOffset = 0.0;
 
     public final SwerveDriveKinematics2 kinematics;
@@ -115,7 +116,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        gyro.setYawAxis(gyro.getYawAxis());
+        gyro.setGyroAngle(gyro.getYawAxis(), pose.getRotation().getDegrees());
         poseEstimator.resetPosition(
             getYaw(),
             new SwerveModulePosition[] {
