@@ -1,5 +1,6 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
@@ -8,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class OI {
     private CommandXboxController driver;
-    private CommandXboxController operator;
 
     public final DoubleSupplier drive_x;
     public final DoubleSupplier drive_y;
@@ -17,8 +17,8 @@ public class OI {
     public final DoubleSupplier processed_drive_x;
     public final DoubleSupplier processed_drive_y;
     public final DoubleSupplier processed_drive_rot;
-    public final Trigger driveSlow;
-
+    public final BooleanSupplier driveSlow;
+    
     public final Trigger gyroResetButton;
 
     public OI(int driverPort) {
@@ -27,7 +27,8 @@ public class OI {
         drive_x = () -> -driver.getLeftY();
         drive_y = () -> -driver.getLeftX();
         drive_rot = () -> -driver.getRightX();
-        driveSlow = driver.rightTrigger();
+        //driveSlow = driver.rightTrigger();
+        driveSlow = () -> true;
 
         //processed_drive_x = () -> Math.pow(MathUtil.applyDeadband(drive_x.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);
         //processed_drive_y = () -> Math.pow(MathUtil.applyDeadband(drive_y.getAsDouble(), Constants.OI.deadband, Constants.Swerve.maxSpeed), 3);

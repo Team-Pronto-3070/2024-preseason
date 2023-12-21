@@ -37,20 +37,26 @@ public final class Constants {
         }
 
         public static final class FrontRight {
-            public static final int driveID = 3;
-            public static final int turnID = 7;
+            //public static final int driveID = 3;
+            //public static final int turnID = 7;
+            public static final int driveID = 2;
+            public static final int turnID = 6;
             public static final double offset = 0.0;
         }
 
         public static final class RearLeft {
-            public static final int driveID = 2;
-            public static final int turnID = 6;
+            //public static final int driveID = 2;
+            //public static final int turnID = 6;
+            public static final int driveID = 1;
+            public static final int turnID = 5;
             public static final double offset = Math.PI;
         }
 
         public static final class RearRight {
-            public static final int driveID = 1;
-            public static final int turnID = 5;
+            //public static final int driveID = 1;
+            //public static final int turnID = 5;
+            public static final int driveID = 3;
+            public static final int turnID = 7;
             public static final double offset = Math.PI / 2;
         }
 

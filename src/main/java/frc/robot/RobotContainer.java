@@ -19,16 +19,20 @@ public class RobotContainer {
   public RobotContainer() {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-    
-    swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
-            Math.pow(MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
-            Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.15 : 1),
-            true,
-            true
-        )));
 
-    configureBindings(); 
+    swerve.setDefaultCommand(swerve.run(() -> swerve.drive(
+        Math.pow(MathUtil.applyDeadband(oi.drive_x.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed
+            * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+        Math.pow(MathUtil.applyDeadband(oi.drive_y.getAsDouble(), Constants.OI.deadband), 3) * Constants.Swerve.maxSpeed
+            * (oi.driveSlow.getAsBoolean() ? Constants.OI.slowSpeed : 1),
+        Math.pow(MathUtil.applyDeadband(oi.drive_rot.getAsDouble(), Constants.OI.deadband), 3)
+            * Constants.Swerve.maxAngularSpeed * (oi.driveSlow.getAsBoolean() ? 0.15 : 1),
+        true,
+        true)));
+
+    oi.gyroResetButton.onTrue(swerve.runOnce(swerve::resetGyro));
+    
+    configureBindings();
   }
 
   private void configureBindings() {

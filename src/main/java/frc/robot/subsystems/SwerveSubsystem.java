@@ -23,7 +23,7 @@ import frc.robot.util.SwerveModule;
 import frc.robot.util.SwerveDriveKinematics2;
 import frc.robot.util.SwerveModuleState2;
 
-import org.photonvision.EstimatedRobotPose;
+//import org.photonvision.EstimatedRobotPose;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -164,6 +164,7 @@ public class SwerveSubsystem extends SubsystemBase {
         rearRight.setDesiredState(desiredStates[3], false);
     }
 
+    /*
     public void addPotentialVisionMeasurement(Optional<EstimatedRobotPose> potentialVisionEstimate) {
         if (potentialVisionEstimate.isPresent()) {
             EstimatedRobotPose camPose = potentialVisionEstimate.get();
@@ -173,6 +174,7 @@ public class SwerveSubsystem extends SubsystemBase {
             field.getObject("vision estimate").setPose(new Pose2d(-100, -100, new Rotation2d()));
         }
     }
+    */
 
     public CommandBase turnToAngle(Rotation2d angle, DoubleSupplier x, DoubleSupplier y) {
         PIDController thetaController = new PIDController(0.3, 0.1, 0);
